@@ -1,0 +1,34 @@
+*todo.txt*                                                           (TODO list)
+
+                              Project HALL - TODO
+
+    Primary TODO list for Project HALL development.
+
+================================================================================
+NOTES                                                                     *notes*
+
+- The "reset" button has this same behavior restarts the code, it is not a
+  factory reset flash.
+
+  
+INIT SEQUENCE
+- flash board
+- demonstrate patience
+- press the reset button
+- start host code
+- allow host code to start serial transfer
+
+SETUP
+- You'll need this: `sudo usermod -a -G uucp <username>`
+- I am assuming all arduino-cli commands are run with src/whatever being the
+  config dir. (--config-dir src/) (this is specified in the makefile)
+- Can this all be done in C? I've heard that it can.
+  
+
+================================================================================
+TODO                                                                      *todo*
+
+- 
+
+================================================================================
+vim:tw=80:ft=help:norl:et:ts=2:sw=2:fen:fdl=0:

@@ -1,0 +1,6 @@
+packages/*
+staging/*
+tmp/*
+*.sig
+*.json
+*.yaml
