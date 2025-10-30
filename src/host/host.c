@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <termios.h>
+#include <string.h>
 #include <unistd.h>
 
 // #define BAUDRATE B9600
@@ -21,12 +22,18 @@
 struct __device_arduino _device;
 
 int hall_read(float* buf) {
+    int rdlen;
+    int ctx_dev;
+    union __magnetic_rdg rdg;
+    int msg = 0xbeef;
+    rdlen = write(_device.fd, &msg, 4);
+    rdlen = read(_device.fd, &ctx_dev, 4);
+    rdlen = read(_device.fd, &rdg, 16);
+    memcpy(buf, rdg.bytes, 16);
     return EXIT_SUCCESS;
 }
 
 int arduino_init() {
-    struct __device_arduino _device;
-
     _device.fd = open(MODEMDEVICE, O_RDWR | O_NOCTTY);
     if (_device.fd < 0) {
         perror(MODEMDEVICE);
@@ -62,13 +69,13 @@ int arduino_init() {
     _device.newtio.c_cc[VTIME] = 0;
 
     tcsetattr(_device.fd, TCSANOW, &_device.newtio);
-  
+
     tcflush(_device.fd, TCIFLUSH);
-  
+
     // TODO: actual syncing should be done here...
     printf("ARDUINO connection established.");
     printf("Baudrate: %i\n", BAUDRATE);
-  
+
     return EXIT_SUCCESS;
 }
 
