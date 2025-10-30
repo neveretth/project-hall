@@ -30,7 +30,6 @@ monitor:
 host: objdir
 	$(CC) $(HOSTSRC)/*.c -o $(OBJDIR)/host
 
-
 objdir:
 	mkdir -p $(OBJDIR)
 	
