@@ -15,6 +15,7 @@ struct __device_arduino {
 };
 
 extern struct __device_arduino _device;
+extern int _ping;
 
 // Reading with no math operations performed, raw data...
 // This should be the building block of most of the stuff.

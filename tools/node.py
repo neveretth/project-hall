@@ -3,8 +3,27 @@ import matplotlib.pyplot as plt
 import time
 import hall
 
+# Proof of concept for the E vector live representation.
 hall.init()
 
+ax = plt.figure().add_subplot(projection="3d")
+
+ax.set_xlim([-1,1])
+ax.set_ylim([-1,1])
+ax.set_zlim([-1,1])
+ax.view_init(15, 45)
+
+# x,y,z,i,j,k,
+# We can read ijk from an interface with some "hall.read(datavec)"
+# Obviously figuring out the scale here is a big concern, as well 
+# as how to make these look better, but this is the _general_ idea...
+ax.quiver(0, 0, 0, 1, 0, 0, color="#ff0000")
+ax.quiver(0, 0, 0, 0, 1, 0, color="#00ff00")
+ax.quiver(0, 0, 0, 0, 0, 1, color="#0000ff")
+
+plt.show()
+
+# Okay let's imagine it changing in time...
 plt.ion()
 fig, ax = plt.subplots()
 fig.clf()
@@ -17,16 +36,36 @@ ax.set_zlim([-1,1])
 plt.show()
 
 data = np.zeros(4, np.float32)
+calibrate = np.zeros(4, np.float32)
+avg = np.zeros(4, np.float32)
 
+runavg = 16
+
+for i in range(128):
+    hall.read(calibrate)
+    calibrate = calibrate
+    avg = avg + calibrate
+
+calibrate = avg / 128
+        
 while 1:
+    avg = np.zeros(4, np.float32)
+    # Okay obviously this is not efficient.. but it's fine? maybe...
+    # alright yeah I'll confess that this is pretty fucking terrible... but it
+    # _does_ sort of do what I want to show is doable.
     ax.cla()
     ax.set_xlim([-1,1])
     ax.set_ylim([-1,1])
     ax.set_zlim([-1,1])
     # ax.view_init(15, 45)
     
-    hall.read(data)
-    print(data)
+    for i in range(runavg):
+        hall.read(data)
+        data = data - calibrate
+        avg = avg + data
+        
+    
+    avg = avg / runavg
     
     ax.quiver(0, 0, 0, data[0], 0, 0, color="#ff0000") # x
     ax.quiver(0, 0, 0, 0, data[1], 0, color="#00ff00") # y
@@ -35,5 +74,4 @@ while 1:
     
     plt.pause(0.01)
     
-
 hall.end()

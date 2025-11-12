@@ -21,13 +21,14 @@
 
 struct __device_arduino _device;
 
+int _ping;
+
 int hall_read(float* buf) {
     int rdlen;
-    int ctx_dev;
+    _ping = 45; // Ping
     union __magnetic_rdg rdg;
-    int msg = 0xbeef;
-    rdlen = write(_device.fd, &msg, 4);
-    rdlen = read(_device.fd, &ctx_dev, 4);
+    rdlen = write(_device.fd, &_ping, 4);
+    rdlen = read(_device.fd, &_ping, 4);
     rdlen = read(_device.fd, &rdg, 16);
     memcpy(buf, rdg.bytes, 16);
     return EXIT_SUCCESS;
@@ -70,6 +71,9 @@ int arduino_init() {
 
     tcsetattr(_device.fd, TCSANOW, &_device.newtio);
 
+    // Why must we flush twice? Curious.
+    tcflush(_device.fd, TCIFLUSH);
+    tcflush(_device.fd, TCIFLUSH);
     tcflush(_device.fd, TCIFLUSH);
 
     // TODO: actual syncing should be done here...

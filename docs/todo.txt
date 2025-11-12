@@ -12,6 +12,7 @@ NOTES                                                                     *notes
 
   
 INIT SEQUENCE
+- plug board into computer
 - flash board
 - demonstrate patience
 - press the reset button
@@ -28,7 +29,7 @@ SETUP
 ================================================================================
 TODO                                                                      *todo*
 
-- 
+
 
 ================================================================================
 vim:tw=80:ft=help:norl:et:ts=2:sw=2:fen:fdl=0:
