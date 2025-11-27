@@ -23,8 +23,6 @@ union __data {
     char bytes[4];
 };
 
-union __data ctx = {.i32 = 0};
-
 union __magnetic_rdg rdg;
 union __magnetic_rdg dmp;
 
@@ -37,36 +35,39 @@ void setup() {
     Wire.begin();
     Serial.begin(BAUDRATE);  
     sensor.setTemperatureEn(true);
-    sensor.setConvAvg(TMAG5273_X32_CONVERSION);
+    
+    // TODO: yeah okay we _should_ verify this,
+    // but I don't really care to be frank.
     sensor.begin(i2cAddress, Wire); // Assume it works.
+    
+    // TODO: check to see if these change anything significantly...
+    sensor.setXYAxisRange(TMAG5273_RANGE_40MT);
+    sensor.setZAxisRange(TMAG5273_RANGE_40MT);
+    // sensor.setXYAxisRange(TMAG5273_RANGE_80MT);
+    // sensor.setZAxisRange(TMAG5273_RANGE_80MT);
+    sensor.setGlitchFilter(TMAG5273_GLITCH_ON);
+    sensor.setLowPower(TMAG5273_LOW_NOISE_MODE);
+    
+    // Readings give average of 32 sensor polls
+    sensor.setConvAvg(TMAG5273_X32_CONVERSION);
 }
 
 void loop() {
-    // Checks if mag channels are on - turns on in setup
     if (Serial.available() >= 4) { 
-        Serial.readBytes(dmp.bytes, 4); // Read and dump init sig
-        // if(sensor.getMagneticChannel() != 0) {
-
-            // Dump because why the fuck not.
-            
-            // sensor.getXData();
-            rdg.f32[XDIM] = sensor.getXData();
-            // sensor.getYData();
-            rdg.f32[YDIM] = sensor.getYData();
-            // sensor.getZData();
-            rdg.f32[ZDIM] = sensor.getZData();
-            // sensor.getTemp();
-            rdg.f32[TEMP] = sensor.getTemp();
-            
-            Serial.write(dmp.bytes, 4);
-            Serial.write(rdg.bytes, 16);
-        // }
-        // else {
-        //     // Send back whatever was sent to the device.
-        //     // Serial.write(dmp.bytes, 4);
-        //     // Serial.write(dmp.bytes, 16);
-        // }
-        ctx.i32++;
+        // Save ping to verify connection between device and host.
+        Serial.readBytes(dmp.bytes, 4);
+        
+        // sensor.getMagneticChannel();
+        // can be used to check status, but we don't care.
+        
+        rdg.f32[XDIM] = sensor.getXData();
+        rdg.f32[YDIM] = sensor.getYData();
+        rdg.f32[ZDIM] = sensor.getZData();
+        // rdg.f32[TEMP] = 0.0;
+        rdg.f32[TEMP] = sensor.getTemp();
+        
+        Serial.write(dmp.bytes, 4);
+        Serial.write(rdg.bytes, 16);
     }
 
     return;

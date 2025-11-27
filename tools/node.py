@@ -37,19 +37,21 @@ plt.show()
 
 data = np.zeros(4, np.float32)
 calibrate = np.zeros(4, np.float32)
-avg = np.zeros(4, np.float32)
+avg = np.zeros(3, np.float32)
 
-runavg = 16
+runavg = 8
+calavg = 128
 
-for i in range(128):
+for i in range(calavg):
     hall.read(calibrate)
     calibrate = calibrate
-    avg = avg + calibrate
+    avg = avg + calibrate[:3]
 
-calibrate = avg / 128
+calibrate[:3] = avg / calavg
+print(calibrate)
         
 while 1:
-    avg = np.zeros(4, np.float32)
+    avg = np.zeros(3, np.float32)
     # Okay obviously this is not efficient.. but it's fine? maybe...
     # alright yeah I'll confess that this is pretty fucking terrible... but it
     # _does_ sort of do what I want to show is doable.
@@ -62,10 +64,11 @@ while 1:
     for i in range(runavg):
         hall.read(data)
         data = data - calibrate
-        avg = avg + data
+        avg = avg + data[:3]
         
-    
     avg = avg / runavg
+    
+    print(avg, ": error%: ", np.sqrt(avg.dot(avg) + (.3)**2) / np.sqrt(avg.dot(avg)) * 100)
     
     ax.quiver(0, 0, 0, data[0], 0, 0, color="#ff0000") # x
     ax.quiver(0, 0, 0, 0, data[1], 0, color="#00ff00") # y

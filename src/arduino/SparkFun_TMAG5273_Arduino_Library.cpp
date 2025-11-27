@@ -2548,9 +2548,19 @@ float TMAG5273::getXData()
     }
 
     // 16-bit data format equation
-    float div = 32768;
-    float xOut = -(range * xData) / div;
-
+    // float div = 32768;
+    // float xOut = -(range * xData) / div;
+    
+    // Idea for 40mT range
+    // this could fix some typing issues possibly...
+    // But I'm not confident in that per-se
+    // float xOut = -xData * (1 / 820);
+    // possibly this but that seems unlikely
+    float xOut = -(int32_t)xData * (1.0 / 820.0);
+    //
+    // ALSO: test out using the arduino native lib, instead of this CXX code,
+    // even though by all logic _this_ should be better?
+    
     return xOut;
 }
 
@@ -2584,8 +2594,10 @@ float TMAG5273::getYData()
     }
 
     // 16-bit data format equation
-    float div = 32768;
-    float yOut = (range * yData) / div;
+    // float div = 32768;
+    // float yOut = (range * yData) / div;
+    
+    float yOut = -(int32_t)yData * (1.0 / 820.0);
 
     return yOut;
 }
@@ -2621,8 +2633,10 @@ float TMAG5273::getZData()
 
     // div = (2^16) / 2    (as per the datasheet equation 10)
     // 16-bit data format equation
-    float div = 32768;
-    float zOut = (range * zData) / div;
+    // float div = 32768;
+    // float zOut = (range * zData) / div;
+    
+    float zOut = -(int32_t)zData * (1.0 / 820.0);
 
     return zOut;
 }
