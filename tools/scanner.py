@@ -41,6 +41,6 @@ for j in range(datarange):
 
     data[j] = avg
     
-pd.DataFrame(data).to_csv("good.csv")
+pd.DataFrame(data).to_csv("../datadump/angular2.csv")
     
 hall.end()
